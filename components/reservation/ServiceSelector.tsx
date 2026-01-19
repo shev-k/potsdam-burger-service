@@ -1,20 +1,22 @@
 import React from 'react';
-import { ServiceCategory, ReservationService } from '../../types';
-import { Plus, Minus, Info } from 'lucide-react';
+import { ServiceCategory, ReservationText } from '../../types';
+import { Info } from 'lucide-react';
 
 interface ServiceSelectorProps {
   categories: ServiceCategory[];
   selectedServices: Record<string, number>;
   onUpdateService: (serviceId: string, delta: number) => void;
+  labels: ReservationText['wizard']['services'];
+  title: string;
 }
 
-const ServiceSelector: React.FC<ServiceSelectorProps> = ({ categories, selectedServices, onUpdateService }) => {
+const ServiceSelector: React.FC<ServiceSelectorProps> = ({ categories, selectedServices, onUpdateService, labels, title }) => {
   const getCount = (id: string) => selectedServices[id] || 0;
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-potsdam-dark">Select Services</h2>
-      <p className="text-gray-600">Please choose the services you require for your appointment.</p>
+      <h2 className="text-2xl font-bold text-potsdam-dark">{title}</h2>
+      <p className="text-gray-600">{labels.subtitle}</p>
 
       <div className="space-y-4">
         {categories.map((cat) => (
@@ -32,12 +34,12 @@ const ServiceSelector: React.FC<ServiceSelectorProps> = ({ categories, selectedS
                        <div className="group relative ml-2">
                           <Info size={16} className="text-gray-400 cursor-help" />
                           <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 bg-gray-800 text-white text-xs p-2 rounded z-10">
-                            Required: {service.docsRequired}
+                            {labels.docsRequired} {service.docsRequired}
                           </div>
                        </div>
                     </div>
                     <span className="text-xs text-gray-500 block mt-1">
-                      Approx. {service.duration} mins
+                      {labels.duration} {service.duration} {labels.mins}
                     </span>
                   </div>
                   
@@ -48,17 +50,15 @@ const ServiceSelector: React.FC<ServiceSelectorProps> = ({ categories, selectedS
                       className="p-2 text-gray-500 hover:text-potsdam-red disabled:opacity-30 disabled:hover:text-gray-500 transition-colors"
                       aria-label="Decrease quantity"
                     >
-                      <Minus size={16} />
+                      -
                     </button>
-                    <span className="w-8 text-center font-bold text-gray-900">
-                      {getCount(service.id)}
-                    </span>
+                    <span className="w-10 text-center font-bold">{getCount(service.id)}</span>
                     <button 
                       onClick={() => onUpdateService(service.id, 1)}
                       className="p-2 text-gray-500 hover:text-potsdam-red transition-colors"
                       aria-label="Increase quantity"
                     >
-                      <Plus size={16} />
+                      +
                     </button>
                   </div>
                 </div>

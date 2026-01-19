@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
-import { MockSlots } from '../../types';
+import { MockSlots, ReservationText, Language } from '../../types';
 
 interface CalendarWidgetProps {
   mockSlots: MockSlots;
@@ -8,6 +8,8 @@ interface CalendarWidgetProps {
   selectedTime: string | null;
   onSelectDate: (date: Date) => void;
   onSelectTime: (time: string) => void;
+  labels: ReservationText['wizard']['date'];
+  lang: Language;
 }
 
 const CalendarWidget: React.FC<CalendarWidgetProps> = ({ 
@@ -15,11 +17,15 @@ const CalendarWidget: React.FC<CalendarWidgetProps> = ({
   selectedDate, 
   selectedTime, 
   onSelectDate, 
-  onSelectTime 
+  onSelectTime,
+  labels,
+  lang
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  
+  const locale = lang === 'de' ? 'de-DE' : 'en-US';
 
   // Generate calendar days
   const getDaysInMonth = (date: Date) => {
@@ -52,156 +58,119 @@ const CalendarWidget: React.FC<CalendarWidgetProps> = ({
   };
 
   const isDateBlocked = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
-    if (mockSlots.blockedDates.includes(dateString)) return true;
-    if (mockSlots.fullyBookedDates.includes(dateString)) return true;
-    
-    // Block weekends if configured
+    const dateStr = date.toISOString().split('T')[0];
+    return mockSlots.blockedDates.includes(dateStr) || mockSlots.fullyBookedDates.includes(dateStr);
+  };
+
+  const isWeekend = (date: Date) => {
     const day = date.getDay();
-    if (!mockSlots.openingHours.weekend && (day === 0 || day === 6)) return true;
-
-    // Block past dates
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (date < today) return true;
-
-    return false;
+    return day === 0 || day === 6;
   };
 
-  const isSelected = (date: Date) => {
-    return selectedDate && 
-           date.getDate() === selectedDate.getDate() && 
-           date.getMonth() === selectedDate.getMonth() && 
-           date.getFullYear() === selectedDate.getFullYear();
-  };
-
-  // Simulate fetching slots when date changes
+  // Simulating fetching slots
   useEffect(() => {
     if (selectedDate) {
       setLoadingSlots(true);
       setAvailableTimeSlots([]);
-      
-      // Fake API delay
-      const timer = setTimeout(() => {
-        const slots: string[] = [];
-        const startHour = parseInt(mockSlots.openingHours.start.split(':')[0]);
-        const endHour = parseInt(mockSlots.openingHours.end.split(':')[0]);
-        
-        for (let h = startHour; h < endHour; h++) {
-          for (let m = 0; m < 60; m += 15) {
-            // Randomly block some slots to simulate real bookings
-            if (Math.random() > 0.4) {
-               const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-               slots.push(timeStr);
-            }
-          }
-        }
+      setTimeout(() => {
+        // Mock generation of slots
+        const slots = ['08:00', '08:30', '09:00', '09:45', '11:00', '13:30', '14:45', '16:00'];
         setAvailableTimeSlots(slots);
         setLoadingSlots(false);
-      }, 600);
-      
-      return () => clearTimeout(timer);
+      }, 500);
     }
-  }, [selectedDate, mockSlots]);
+  }, [selectedDate]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {/* Calendar Side */}
+    <div className="grid md:grid-cols-2 gap-8">
+      {/* Calendar */}
       <div>
-        <h2 className="text-2xl font-bold text-potsdam-dark mb-6">Choose Date</h2>
-        
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 border-b">
-            <button onClick={() => changeMonth(-1)} className="p-2 hover:bg-gray-200 rounded-full">
+        <h3 className="text-lg font-bold text-potsdam-dark mb-4">{labels.subtitle}</h3>
+        <div className="bg-white rounded-lg shadow border border-gray-200 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <button onClick={() => changeMonth(-1)} className="p-1 hover:bg-gray-100 rounded">
               <ChevronLeft size={20} />
             </button>
-            <span className="font-bold text-lg">
-              {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            <span className="font-bold text-gray-800">
+              {currentMonth.toLocaleDateString(locale, { month: 'long', year: 'numeric' })}
             </span>
-            <button onClick={() => changeMonth(1)} className="p-2 hover:bg-gray-200 rounded-full">
+            <button onClick={() => changeMonth(1)} className="p-1 hover:bg-gray-100 rounded">
               <ChevronRight size={20} />
             </button>
           </div>
-
-          {/* Grid Header */}
-          <div className="grid grid-cols-7 text-center p-2 text-xs font-bold text-gray-500 uppercase tracking-wide">
-            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+          
+          <div className="grid grid-cols-7 gap-1 text-center text-sm mb-2">
+            {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => (
+              <div key={d} className="text-gray-400 font-medium">{d}</div>
+            ))}
           </div>
 
-          {/* Days Grid */}
-          <div className="grid grid-cols-7 p-2 gap-1">
-            {days.map((date, idx) => {
-              if (!date) return <div key={idx} className="h-10"></div>;
+          <div className="grid grid-cols-7 gap-1">
+            {days.map((d, idx) => {
+              if (!d) return <div key={idx}></div>;
               
-              const blocked = isDateBlocked(date);
-              const selected = isSelected(date);
+              const isSelected = selectedDate && 
+                                 d.getDate() === selectedDate.getDate() && 
+                                 d.getMonth() === selectedDate.getMonth();
               
+              const blocked = isDateBlocked(d) || (isWeekend(d) && !mockSlots.openingHours.weekend);
+
               return (
                 <button
                   key={idx}
-                  onClick={() => !blocked && onSelectDate(date)}
+                  onClick={() => !blocked && onSelectDate(d)}
                   disabled={blocked}
-                  className={`
-                    h-10 w-full rounded-md flex items-center justify-center text-sm font-medium transition-all
-                    ${selected 
-                      ? 'bg-potsdam-red text-white shadow-md transform scale-105' 
+                  className={`h-10 rounded flex items-center justify-center text-sm transition-colors ${
+                    isSelected 
+                      ? 'bg-potsdam-red text-white font-bold shadow-sm'
                       : blocked 
-                        ? 'text-gray-300 cursor-not-allowed bg-gray-50' 
-                        : 'text-gray-700 hover:bg-blue-50 hover:text-potsdam-blue'
-                    }
-                  `}
+                        ? 'text-gray-300 cursor-not-allowed'
+                        : 'text-gray-700 hover:bg-gray-100 font-medium'
+                  }`}
                 >
-                  {date.getDate()}
+                  {d.getDate()}
                 </button>
               );
             })}
           </div>
-          
-          <div className="p-4 bg-gray-50 text-xs text-gray-500 flex justify-between border-t">
-            <div className="flex items-center"><div className="w-3 h-3 bg-potsdam-red rounded-full mr-1"></div> Selected</div>
-            <div className="flex items-center"><div className="w-3 h-3 bg-white border border-gray-300 rounded-full mr-1"></div> Available</div>
-            <div className="flex items-center"><div className="w-3 h-3 bg-gray-200 rounded-full mr-1"></div> Blocked</div>
-          </div>
         </div>
       </div>
 
-      {/* Time Slots Side */}
+      {/* Time Slots */}
       <div>
-        <h2 className="text-2xl font-bold text-potsdam-dark mb-6">Choose Time</h2>
+        <h3 className="text-lg font-bold text-potsdam-dark mb-4">
+          {selectedDate 
+            ? selectedDate.toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' }) 
+            : labels.selectTime}
+        </h3>
         
         {!selectedDate ? (
-          <div className="h-64 flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
-            <Clock size={48} className="mb-4 opacity-20" />
-            <p>Please select a date first</p>
+          <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-gray-400 bg-gray-50">
+             <Clock size={32} className="mr-2 opacity-50" />
+             <span>{labels.selectTime}</span>
           </div>
         ) : loadingSlots ? (
           <div className="h-64 flex items-center justify-center">
-             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-potsdam-red"></div>
-          </div>
-        ) : availableTimeSlots.length === 0 ? (
-          <div className="h-64 flex items-center justify-center text-red-500 border border-red-100 bg-red-50 rounded-lg">
-            <p>No appointments available for this date.</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-potsdam-red"></div>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 max-h-96 overflow-y-auto">
-             <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-               {availableTimeSlots.map((time) => (
-                 <button
-                   key={time}
-                   onClick={() => onSelectTime(time)}
-                   className={`
-                     py-2 px-1 rounded text-sm font-medium border transition-colors
-                     ${selectedTime === time
-                       ? 'bg-potsdam-blue text-white border-potsdam-blue'
-                       : 'border-gray-200 text-gray-700 hover:border-potsdam-blue hover:text-potsdam-blue'
-                     }
-                   `}
-                 >
-                   {time}
-                 </button>
-               ))}
-             </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+             {availableTimeSlots.map(time => (
+               <button
+                 key={time}
+                 onClick={() => onSelectTime(time)}
+                 className={`py-2 px-4 rounded border text-center transition-all ${
+                   selectedTime === time
+                     ? 'border-potsdam-red bg-red-50 text-potsdam-red font-bold ring-1 ring-potsdam-red'
+                     : 'border-gray-200 hover:border-potsdam-red hover:text-potsdam-red text-gray-600'
+                 }`}
+               >
+                 {time}
+               </button>
+             ))}
+             {availableTimeSlots.length === 0 && (
+               <p className="col-span-3 text-center text-gray-500 py-8">{labels.noSlots}</p>
+             )}
           </div>
         )}
       </div>

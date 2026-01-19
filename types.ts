@@ -128,6 +128,83 @@ export interface ReservationData {
   existingAppointments: ExistingAppointment[];
 }
 
+export interface ReservationText {
+  title: string;
+  backToHome: string;
+  tabs: {
+    new: string;
+    manage: string;
+  };
+  manage: {
+    title: string;
+    subtitle: string;
+    labelApptId: string;
+    labelPin: string;
+    btnSearch: string;
+    apptFound: string;
+    cancelBtn: string;
+    confirmCancel: string;
+    errorNotFound: string;
+    successCancelled: string;
+    customer: string;
+    date: string;
+    time: string;
+    service: string;
+  };
+  wizard: {
+    titles: {
+      services: string;
+      date: string;
+      personal: string;
+      confirm: string;
+    };
+    steps: {
+      services: string;
+      date: string;
+      personal: string;
+      confirm: string;
+    };
+    buttons: {
+      back: string;
+      next: string;
+      confirm: string;
+      newBooking: string;
+    };
+    services: {
+        subtitle: string;
+        docsRequired: string; 
+        duration: string;
+        mins: string;
+    };
+    date: {
+        subtitle: string;
+        selectTime: string;
+        noSlots: string;
+    };
+    personal: {
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: string;
+        dob: string;
+        gdprLabel: string;
+        gdprLink: string;
+        required: string;
+    };
+    confirm: {
+        location: string;
+        services: string;
+        contact: string;
+        successTitle: string;
+        successMsg: string;
+        apptId: string;
+        pin: string;
+        important: string;
+        bringDocs: string;
+    };
+  };
+}
+
 export interface BookingState {
   selectedServices: Record<string, number>; // ServiceId -> Count
   selectedDate: Date | null;

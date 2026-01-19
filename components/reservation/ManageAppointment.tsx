@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { RESERVATION_DATA } from '../../reservationData';
-import { ExistingAppointment } from '../../types';
+import { ExistingAppointment, ReservationText, ReservationData } from '../../types';
 import { Search, Trash2, Calendar, Clock, User } from 'lucide-react';
 
-const ManageAppointment: React.FC = () => {
+interface ManageAppointmentProps {
+  data: ReservationData;
+  labels: ReservationText['manage'];
+}
+
+const ManageAppointment: React.FC<ManageAppointmentProps> = ({ data, labels }) => {
   const [appointmentId, setAppointmentId] = useState('');
   const [pin, setPin] = useState('');
   const [foundAppointment, setFoundAppointment] = useState<ExistingAppointment | null>(null);
@@ -17,19 +21,19 @@ const ManageAppointment: React.FC = () => {
     setFoundAppointment(null);
 
     // Mock search logic
-    const appt = RESERVATION_DATA.existingAppointments.find(
+    const appt = data.existingAppointments.find(
       a => a.appointmentId === appointmentId && a.pin === pin
     );
 
     if (appt) {
       setFoundAppointment(appt);
     } else {
-      setError('No appointment found with this ID and PIN.');
+      setError(labels.errorNotFound);
     }
   };
 
   const handleCancel = () => {
-    if (confirm("Are you sure you want to cancel this appointment?")) {
+    if (confirm(labels.confirmCancel)) {
       setCancelled(true);
       setFoundAppointment(null);
     }
@@ -38,15 +42,15 @@ const ManageAppointment: React.FC = () => {
   return (
     <div className="max-w-xl mx-auto py-8">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-potsdam-dark">Manage Appointment</h2>
-        <p className="text-gray-600">View or cancel your existing appointment.</p>
+        <h2 className="text-2xl font-bold text-potsdam-dark">{labels.title}</h2>
+        <p className="text-gray-600">{labels.subtitle}</p>
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
         {!foundAppointment && !cancelled && (
           <form onSubmit={handleSearch} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Appointment Number</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{labels.labelApptId}</label>
               <input 
                 type="text" 
                 value={appointmentId}
@@ -57,7 +61,7 @@ const ManageAppointment: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">PIN</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{labels.labelPin}</label>
               <input 
                 type="password" 
                 value={pin}
@@ -67,6 +71,15 @@ const ManageAppointment: React.FC = () => {
                 maxLength={4}
                 required
               />
+              <div className="flex justify-end mt-1">
+                <button 
+                  type="button"
+                  onClick={() => alert("Mock: This would trigger the PIN recovery process (e.g. email/SMS).")}
+                  className="text-sm text-blue-600 hover:text-blue-800 underline"
+                >
+                  Forgot PIN?
+                </button>
+              </div>
             </div>
             
             {error && <p className="text-red-600 text-sm">{error}</p>}
@@ -76,7 +89,7 @@ const ManageAppointment: React.FC = () => {
               className="w-full bg-potsdam-dark text-white py-2 rounded hover:bg-gray-800 transition-colors flex justify-center items-center"
             >
               <Search size={18} className="mr-2" />
-              Find Appointment
+              {labels.btnSearch}
             </button>
           </form>
         )}
@@ -84,7 +97,7 @@ const ManageAppointment: React.FC = () => {
         {foundAppointment && (
           <div className="space-y-6">
             <div className="bg-green-50 border border-green-200 rounded p-4 text-green-800 text-center">
-              Appointment Found
+              {labels.apptFound}
             </div>
             
             <div className="space-y-3">
@@ -113,7 +126,7 @@ const ManageAppointment: React.FC = () => {
               className="w-full border border-red-200 text-red-600 bg-red-50 py-2 rounded hover:bg-red-100 transition-colors flex justify-center items-center"
             >
               <Trash2 size={18} className="mr-2" />
-              Cancel Appointment
+              {labels.cancelBtn}
             </button>
           </div>
         )}
@@ -123,8 +136,8 @@ const ManageAppointment: React.FC = () => {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Trash2 className="text-green-600" size={32} />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Appointment Cancelled</h3>
-            <p className="text-gray-600 mb-6">Your appointment has been successfully cancelled.</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{labels.successCancelled}</h3>
+            
             <button 
               onClick={() => { setCancelled(false); setAppointmentId(''); setPin(''); }}
               className="text-potsdam-blue hover:underline font-medium"

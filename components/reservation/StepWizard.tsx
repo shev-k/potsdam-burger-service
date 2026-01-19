@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ReservationData, BookingState } from '../../types';
+import { ReservationData, BookingState, ReservationText, Language } from '../../types';
 import ServiceSelector from './ServiceSelector';
 import CalendarWidget from './CalendarWidget';
 import UserDataForm from './UserDataForm';
@@ -9,9 +9,11 @@ import { Check } from 'lucide-react';
 interface StepWizardProps {
   data: ReservationData;
   onDone: () => void;
+  labels: ReservationText['wizard'];
+  lang: Language;
 }
 
-const StepWizard: React.FC<StepWizardProps> = ({ data, onDone }) => {
+const StepWizard: React.FC<StepWizardProps> = ({ data, onDone, labels, lang }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [completed, setCompleted] = useState(false);
@@ -64,7 +66,7 @@ const StepWizard: React.FC<StepWizardProps> = ({ data, onDone }) => {
     // Simulate backend call
     setTimeout(() => {
       setConfirmationDetails({
-        id: `P-2026-${Math.floor(Math.random() * 10000)}`,
+        id: `P-2026-${Math.floor(1000 + Math.random() * 9000)}`,
         pin: Math.floor(1000 + Math.random() * 9000).toString()
       });
       setCompleted(true);
@@ -78,31 +80,32 @@ const StepWizard: React.FC<StepWizardProps> = ({ data, onDone }) => {
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <Check className="text-green-600" size={40} />
         </div>
-        <h2 className="text-3xl font-bold text-potsdam-dark mb-4">Booking Confirmed!</h2>
+        <h2 className="text-3xl font-bold text-potsdam-dark mb-4">{labels.confirm.successTitle}</h2>
         <p className="text-gray-600 mb-8">
-          Thank you. Your appointment has been successfully booked. 
-          A confirmation email has been sent to <strong>{bookingState.userData.email}</strong>.
+          {labels.confirm.successMsg} 
+          <br/>
+          <strong>{bookingState.userData.email}</strong>.
         </p>
 
         <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-8 inline-block text-left w-full">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">Appointment ID</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wide">{labels.confirm.apptId}</p>
               <p className="text-2xl font-mono font-bold text-potsdam-dark">{confirmationDetails.id}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">Security PIN</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wide">{labels.confirm.pin}</p>
               <p className="text-2xl font-mono font-bold text-potsdam-dark">{confirmationDetails.pin}</p>
             </div>
           </div>
-          <p className="text-xs text-red-500 mt-4">* Please save these details to modify or cancel your appointment.</p>
+          <p className="text-xs text-red-500 mt-4">* {labels.confirm.important}</p>
         </div>
 
         <button 
           onClick={onDone}
           className="bg-potsdam-dark text-white px-8 py-3 rounded hover:bg-gray-800 transition-colors"
         >
-          Back to Home
+          {labels.buttons.newBooking}
         </button>
       </div>
     );
@@ -115,11 +118,15 @@ const StepWizard: React.FC<StepWizardProps> = ({ data, onDone }) => {
         {[1, 2, 3, 4].map((s) => (
           <div key={s} className="flex items-center">
              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-               step >= s ? 'bg-potsdam-red text-white' : 'bg-gray-200 text-gray-500'
+               step >= s ? 'bg-potsdam-red text-white' : 'bg-gray-200 text-gray-400'
              }`}>
                {s}
              </div>
-             {s < 4 && <div className={`w-8 md:w-16 h-1 mx-2 ${step > s ? 'bg-potsdam-red' : 'bg-gray-200'}`}></div>}
+             {s < 4 && (
+               <div className={`w-8 md:w-16 h-1 mx-2 ${
+                 step > s ? 'bg-potsdam-red' : 'bg-gray-200'
+               }`} />
+             )}
           </div>
         ))}
       </div>
@@ -130,6 +137,8 @@ const StepWizard: React.FC<StepWizardProps> = ({ data, onDone }) => {
             categories={data.categories} 
             selectedServices={bookingState.selectedServices}
             onUpdateService={updateService}
+            labels={labels.services}
+            title={labels.titles.services}
           />
         )}
         
@@ -140,6 +149,8 @@ const StepWizard: React.FC<StepWizardProps> = ({ data, onDone }) => {
             selectedTime={bookingState.selectedTime}
             onSelectDate={(d) => setBookingState(p => ({...p, selectedDate: d, selectedTime: null}))}
             onSelectTime={(t) => setBookingState(p => ({...p, selectedTime: t}))}
+            labels={labels.date}
+            lang={lang}
           />
         )}
 
@@ -148,6 +159,8 @@ const StepWizard: React.FC<StepWizardProps> = ({ data, onDone }) => {
             data={bookingState.userData}
             onChange={(d) => setBookingState(p => ({...p, userData: d}))}
             isValid={!!isUserValid}
+            labels={labels.personal}
+            title={labels.titles.personal}
           />
         )}
 
@@ -157,6 +170,10 @@ const StepWizard: React.FC<StepWizardProps> = ({ data, onDone }) => {
              reservationData={data}
              onConfirm={confirmBooking}
              isProcessing={loading}
+             labels={labels.confirm}
+             title={labels.titles.confirm}
+             btnLabel={labels.buttons.confirm}
+             lang={lang}
           />
         )}
       </div>
@@ -170,7 +187,7 @@ const StepWizard: React.FC<StepWizardProps> = ({ data, onDone }) => {
                 onClick={prevStep}
                 className="px-6 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition-colors font-medium"
               >
-                Back
+                {labels.buttons.back}
               </button>
             ) : (
               <div></div> // Spacer
@@ -186,7 +203,7 @@ const StepWizard: React.FC<StepWizardProps> = ({ data, onDone }) => {
               }
               className="px-8 py-2 bg-potsdam-red text-white rounded hover:bg-red-700 disabled:opacity-50 disabled:hover:bg-potsdam-red transition-colors font-bold shadow-sm"
             >
-               {loading ? '...' : step === 3 ? 'Review' : 'Next'}
+               {loading ? '...' : labels.buttons.next}
             </button>
           </div>
         </div>

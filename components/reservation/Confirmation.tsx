@@ -1,5 +1,5 @@
-import React from 'react';
-import { BookingState, ReservationData } from '../../types';
+import React, { useState } from 'react';
+import { BookingState, ReservationData, ReservationText, Language } from '../../types';
 import { CheckCircle, Calendar, Clock, MapPin } from 'lucide-react';
 
 interface ConfirmationProps {
@@ -7,9 +7,16 @@ interface ConfirmationProps {
   reservationData: ReservationData;
   onConfirm: () => void;
   isProcessing: boolean;
+  labels: ReservationText['wizard']['confirm'];
+  title: string;
+  btnLabel: string;
+  lang: Language;
 }
 
-const Confirmation: React.FC<ConfirmationProps> = ({ bookingData, reservationData, onConfirm, isProcessing }) => {
+const Confirmation: React.FC<ConfirmationProps> = ({ bookingData, reservationData, onConfirm, isProcessing, labels, title, btnLabel, lang }) => {
+  const [hasPhoto, setHasPhoto] = useState(false);
+  const [hasOldPassport, setHasOldPassport] = useState(false);
+
   const getServiceName = (id: string) => {
     for (const cat of reservationData.categories) {
       const srv = cat.services.find(s => s.id === id);
@@ -18,9 +25,11 @@ const Confirmation: React.FC<ConfirmationProps> = ({ bookingData, reservationDat
     return id;
   };
 
+  const locale = lang === 'de' ? 'de-DE' : 'en-US';
+
   return (
     <div className="max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold text-potsdam-dark mb-6">Confirm Appointment</h2>
+      <h2 className="text-2xl font-bold text-potsdam-dark mb-6">{title}</h2>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         {/* Header */}
@@ -28,7 +37,7 @@ const Confirmation: React.FC<ConfirmationProps> = ({ bookingData, reservationDat
            <div className="flex items-center text-potsdam-dark mb-2">
              <Calendar className="mr-2" size={20} />
              <span className="font-bold text-xl">
-               {bookingData.selectedDate?.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+               {bookingData.selectedDate?.toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
              </span>
            </div>
            <div className="flex items-center text-potsdam-dark">
@@ -41,21 +50,21 @@ const Confirmation: React.FC<ConfirmationProps> = ({ bookingData, reservationDat
         <div className="p-6 space-y-6">
           
           <div>
-            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Location</h3>
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">{labels.location}</h3>
             <div className="flex items-start">
               <MapPin className="mr-2 text-potsdam-red mt-0.5" size={18} />
               <p className="text-gray-900">{reservationData.settings.centerLocation}</p>
             </div>
           </div>
-
+          
           <div>
-             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Selected Services</h3>
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">{labels.services}</h3>
              <ul className="space-y-2">
                {Object.entries(bookingData.selectedServices).map(([id, count]) => (
                  (count as number) > 0 && (
-                   <li key={id} className="flex justify-between border-b border-gray-100 pb-2">
+                   <li key={id} className="flex justify-between items-center text-gray-900 pb-2 border-b border-gray-100 last:border-0">
                      <span>{getServiceName(id)}</span>
-                     <span className="font-bold">x {count}</span>
+                     <span className="font-bold bg-gray-100 px-2 py-0.5 rounded text-sm">x{count}</span>
                    </li>
                  )
                ))}
@@ -63,40 +72,56 @@ const Confirmation: React.FC<ConfirmationProps> = ({ bookingData, reservationDat
           </div>
 
           <div>
-             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Personal Data</h3>
-             <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-gray-500 block">Name</span>
-                  <span className="font-medium">{bookingData.userData.firstName} {bookingData.userData.lastName}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500 block">Email</span>
-                  <span className="font-medium">{bookingData.userData.email}</span>
-                </div>
+             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">{labels.contact}</h3>
+             <div className="bg-gray-50 p-3 rounded text-sm space-y-1 text-gray-700">
+                <p><span className="font-medium">Name:</span> {bookingData.userData.firstName} {bookingData.userData.lastName}</p>
+                <p><span className="font-medium">Email:</span> {bookingData.userData.email}</p>
+                {bookingData.userData.phone && <p><span className="font-medium">Phone:</span> {bookingData.userData.phone}</p>}
+             </div>
+          </div>
+          
+          <div className="bg-blue-50 p-4 rounded-lg flex items-start">
+             <CheckCircle className="text-blue-600 mr-2 flex-shrink-0" size={20} />
+             <div>
+               <p className="text-sm text-blue-800">
+                 {labels.bringDocs}
+               </p>
              </div>
           </div>
 
+          <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+             <h3 className="text-sm font-bold text-yellow-800 uppercase tracking-wider mb-2">My Checklist</h3>
+             <div className="space-y-2">
+               <label className="flex items-center space-x-2 cursor-pointer">
+                 <input 
+                   type="checkbox" 
+                   checked={hasPhoto} 
+                   onChange={(e) => setHasPhoto(e.target.checked)}
+                   className="rounded text-potsdam-red focus:ring-potsdam-red"
+                 />
+                 <span className="text-sm text-yellow-900">I have a Biometric Photo</span>
+               </label>
+               <label className="flex items-center space-x-2 cursor-pointer">
+                 <input 
+                   type="checkbox" 
+                   checked={hasOldPassport} 
+                   onChange={(e) => setHasOldPassport(e.target.checked)}
+                   className="rounded text-potsdam-red focus:ring-potsdam-red"
+                 />
+                 <span className="text-sm text-yellow-900">I have my Old Passport</span>
+               </label>
+             </div>
+          </div>
         </div>
-
-        {/* Footer */}
-        <div className="p-6 bg-gray-50 border-t flex flex-col items-center space-y-4">
-          <p className="text-xs text-gray-500 text-center">
-            By clicking confirm, a binding appointment will be booked. You will receive an email confirmation.
-          </p>
-          <button
-            onClick={onConfirm}
-            disabled={isProcessing}
-            className="w-full md:w-auto px-8 py-3 bg-potsdam-red text-white font-bold rounded shadow hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center"
-          >
-            {isProcessing ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Processing...
-              </>
-            ) : (
-              'Confirm Appointment'
-            )}
-          </button>
+        
+        <div className="bg-gray-50 p-6 border-t">
+           <button 
+             onClick={onConfirm}
+             disabled={isProcessing || !hasPhoto || !hasOldPassport}
+             className="w-full bg-potsdam-red text-white py-3 rounded font-bold text-lg hover:bg-red-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-wait"
+           >
+             {isProcessing ? 'Processing...' : btnLabel}
+           </button>
         </div>
       </div>
     </div>

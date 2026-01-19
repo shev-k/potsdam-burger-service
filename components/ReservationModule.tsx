@@ -1,30 +1,34 @@
 import React, { useState } from 'react';
-import { RESERVATION_DATA } from '../reservationData';
+import { getReservationContent } from '../reservationData';
 import StepWizard from './reservation/StepWizard';
 import ManageAppointment from './reservation/ManageAppointment';
 import { ArrowLeft } from 'lucide-react';
+import { Language } from '../types';
 
 interface ReservationModuleProps {
   onBack: () => void;
+  lang: Language;
 }
 
-const ReservationModule: React.FC<ReservationModuleProps> = ({ onBack }) => {
+const ReservationModule: React.FC<ReservationModuleProps> = ({ onBack, lang }) => {
   const [activeTab, setActiveTab] = useState<'new' | 'manage'>('new');
+  
+  const { data, text } = getReservationContent(lang);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="bg-white shadow-sm sticky top-20 z-40 border-b border-gray-200">
+      <div className="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-200">
         <div className="container mx-auto px-4 lg:px-8 py-4 flex items-center justify-between">
           <button 
             onClick={onBack}
             className="flex items-center text-gray-500 hover:text-potsdam-red transition-colors font-medium"
           >
             <ArrowLeft size={20} className="mr-2" />
-            Back to Home
+            {text.backToHome}
           </button>
           <h1 className="text-lg font-bold text-potsdam-dark hidden md:block">
-            Online Appointment System
+            {text.title}
           </h1>
         </div>
         
@@ -38,7 +42,7 @@ const ReservationModule: React.FC<ReservationModuleProps> = ({ onBack }) => {
                 : 'border-transparent text-gray-500 hover:text-gray-800'
             }`}
           >
-            Book Appointment
+            {text.tabs.new}
           </button>
           <button
             onClick={() => setActiveTab('manage')}
@@ -48,7 +52,7 @@ const ReservationModule: React.FC<ReservationModuleProps> = ({ onBack }) => {
                 : 'border-transparent text-gray-500 hover:text-gray-800'
             }`}
           >
-            Manage Existing
+            {text.tabs.manage}
           </button>
         </div>
       </div>
@@ -56,9 +60,9 @@ const ReservationModule: React.FC<ReservationModuleProps> = ({ onBack }) => {
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 py-8">
         {activeTab === 'new' ? (
-          <StepWizard data={RESERVATION_DATA} onDone={onBack} />
+          <StepWizard data={data} labels={text.wizard} onDone={onBack} lang={lang} />
         ) : (
-          <ManageAppointment />
+          <ManageAppointment data={data} labels={text.manage} />
         )}
       </div>
     </div>

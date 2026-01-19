@@ -30,7 +30,7 @@ const App: React.FC = () => {
 
   if (currentView === 'reservation') {
     return (
-      <ReservationModule onBack={() => setCurrentView('home')} />
+      <ReservationModule onBack={() => setCurrentView('home')} lang={lang} />
     );
   }
 

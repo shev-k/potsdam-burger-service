@@ -15,17 +15,11 @@ const Navbar: React.FC<NavbarProps> = ({ metadata, navLinks, currentLang, onTogg
       <div className="container mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
         {/* Logo Area */}
         <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 bg-potsdam-red rounded-sm flex items-center justify-center text-white font-bold text-xl">
-            P
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xs uppercase tracking-wider text-gray-500">
-              {currentLang === 'en' ? 'State Capital City' : 'Landeshauptstadt'}
-            </span>
-            <span className="font-bold text-lg leading-tight text-potsdam-dark">
-              Potsdam
-            </span>
-          </div>
+          <img 
+            src="https://vv.potsdam.de/global/headerFooter.php.media/53860/LHP_logo_gross.png"
+            alt="Landeshauptstadt Potsdam"
+            className="h-14 w-auto"
+          />
         </div>
 
         {/* Desktop Links */}
