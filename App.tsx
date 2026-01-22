@@ -46,7 +46,7 @@ const App: React.FC = () => {
 
       <main className="flex-grow">
         {/* Hero Section */}
-        <Hero content={currentContent.pageContent.hero} />
+        <Hero content={currentContent.pageContent.hero} onNavigate={handleNavigate} />
 
         {/* Main Content Area */}
         <div className="container mx-auto px-4 lg:px-8 -mt-16 relative z-10 mb-20">

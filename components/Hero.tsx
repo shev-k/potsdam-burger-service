@@ -1,11 +1,13 @@
 import React from 'react';
 import { HeroSection } from '../types';
+import { Calendar } from 'lucide-react';
 
 interface HeroProps {
   content: HeroSection;
+  onNavigate?: (path: string) => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ content }) => {
+const Hero: React.FC<HeroProps> = ({ content, onNavigate }) => {
   return (
     <div className="relative w-full h-80 md:h-96 lg:h-[28rem] bg-gray-200 overflow-hidden">
       {/* Background Image */}
@@ -28,6 +30,16 @@ const Hero: React.FC<HeroProps> = ({ content }) => {
             <p className="text-lg md:text-xl text-gray-100 font-light leading-relaxed drop-shadow-sm">
               {content.subtitle}
             </p>
+            
+            {content.cta && (
+              <button
+                onClick={() => onNavigate && onNavigate(content.cta!.url)}
+                className="mt-8 bg-potsdam-red hover:bg-red-700 text-white font-bold py-3 px-8 rounded shadow-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center"
+              >
+                <span>{content.cta.label}</span>
+                <Calendar className="ml-2 w-5 h-5" />
+              </button>
+            )}
           </div>
         </div>
       </div>

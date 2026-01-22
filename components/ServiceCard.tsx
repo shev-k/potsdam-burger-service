@@ -8,10 +8,10 @@ interface ServiceCardProps {
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ service, onNavigate }) => {
-  const isInternal = service.cta.url.startsWith('internal:');
+  const isInternal = service.cta?.url.startsWith('internal:') ?? false;
 
   const handleClick = (e: React.MouseEvent) => {
-    if (isInternal && onNavigate) {
+    if (isInternal && onNavigate && service.cta) {
       e.preventDefault();
       onNavigate(service.cta.url);
     }
@@ -58,16 +58,18 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onNavigate }) => {
 
         {/* CTA Button */}
         <div className="mt-auto pt-4 border-t border-gray-100">
-          <a
-            href={isInternal ? '#' : service.cta.url}
-            onClick={handleClick}
-            target={isInternal ? undefined : "_blank"}
-            rel={isInternal ? undefined : "noopener noreferrer"}
-            className="w-full block bg-potsdam-red text-white text-center py-3 px-4 rounded font-bold uppercase tracking-wide text-sm hover:bg-red-700 transition-colors shadow-sm hover:shadow active:transform active:scale-[0.98] flex items-center justify-center"
-          >
-            <span>{service.cta.label}</span>
-            {isInternal ? <Calendar size={16} className="ml-2" /> : <ExternalLink size={16} className="ml-2" />}
-          </a>
+          {service.cta && (
+            <a
+              href={isInternal ? '#' : service.cta.url}
+              onClick={handleClick}
+              target={isInternal ? undefined : "_blank"}
+              rel={isInternal ? undefined : "noopener noreferrer"}
+              className="w-full block bg-potsdam-red text-white text-center py-3 px-4 rounded font-bold uppercase tracking-wide text-sm hover:bg-red-700 transition-colors shadow-sm hover:shadow active:transform active:scale-[0.98] flex items-center justify-center"
+            >
+              <span>{service.cta.label}</span>
+              {isInternal ? <Calendar size={16} className="ml-2" /> : <ExternalLink size={16} className="ml-2" />}
+            </a>
+          )}
           
           {service.contact && (
              <p className="text-center text-xs text-gray-400 mt-2">{service.contact}</p>

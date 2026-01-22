@@ -26,6 +26,10 @@ export interface HeroSection {
   title: string;
   subtitle: string;
   image: string;
+  cta?: {
+    label: string;
+    url: string;
+  };
 }
 
 export interface AlertSection {
@@ -43,7 +47,7 @@ export interface ServiceItem {
   title: string;
   description: string;
   image: string;
-  cta: ServiceCTA;
+  cta?: ServiceCTA;
   links: LinkItem[];
   contact?: string;
 }

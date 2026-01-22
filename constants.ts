@@ -16,7 +16,11 @@ export const CONTENT: Translations = {
       hero: {
         title: "Service Center",
         subtitle: "Your central hub for passports, IDs, and citizen services in Potsdam.",
-        image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/images/passport-1051697_960_720.jpg?h=b3660f0d&itok=DEork815"
+        image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/images/passport-1051697_960_720.jpg?h=b3660f0d&itok=DEork815",
+        cta: {
+            label: "Book Appointment",
+            url: "internal:reservation"
+        }
       },
       alert: {
         type: "info",
@@ -28,10 +32,6 @@ export const CONTENT: Translations = {
           title: "Fast Lanes for Passport and ID-card applications",
           description: "Exclusively for passport and ID-card applications (no express or temporary documents, no name changes). Please check requirements before booking.",
           image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/image/B%C3%BCrgerservice%20Yorckstrasse-Christine-Homann.jpg?h=b8b6b338&itok=Lq-bGkp8",
-          cta: {
-            label: "Book a Fast Lane Appointment",
-            url: "internal:fast-lane"
-          },
           links: [
             { label: "Information on locations (DE)", url: "https://vv.potsdam.de/vv/produkte/fast-lane-standorte.php#tab-unterlagen" }
           ],
@@ -42,10 +42,6 @@ export const CONTENT: Translations = {
           title: "Service Center Yorckstraße",
           description: "Book appointments for all services that require a personal visit. For simple passport applications, we recommend the Fast Lane.",
           image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/image/20250103_130234.jpg?h=674a5d6c&itok=9SK73Sbv",
-          cta: {
-            label: "Appointments for Yorckstraße",
-            url: "internal:yorckstrasse"
-          },
           links: [
             { label: "Locations and opening hours (PDF)", url: "https://vv.potsdam.de/vv/Standorte-des-Buergerservicecenters_.pdf" }
           ]
@@ -55,10 +51,6 @@ export const CONTENT: Translations = {
           title: "Service Center Wilhelmgalerie (Walk-in)",
           description: "Apply for citizen services without an appointment using a Smart Waiting Ticket. Limited tickets available daily.",
           image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/image/2024-02-27-B%C3%BCrgerservice-Pass%C3%BCbergabe-RobertSchnabel.jpg?h=790be497&itok=GxD8ORfL",
-          cta: {
-            label: "Further information",
-            url: "https://vv.potsdam.de/vv/oe/173010100000007821.php"
-          },
           links: [
             { label: "Current Smart Waiting number", url: "https://www.smartwarten.de/tablet-special/landeshauptstadt-potsdam-wilhelmsgalerie" },
             { label: "Locations and opening hours (PDF)", url: "https://vv.potsdam.de/vv/Standorte-des-Buergerservicecenters_.pdf" }
@@ -69,10 +61,6 @@ export const CONTENT: Translations = {
           title: "Collection of passports & ID-cards",
           description: "Book an appointment to collect documents or use the 24/7 pickup station.",
           image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/image/2025-01-27-Dokumentenabholstation-Christine-Homann-IMG_6839.jpg?h=d318f057&itok=b-qIWduz",
-          cta: {
-            label: "Appointments for document collection",
-            url: "internal:collection"
-          },
           links: [
             { label: "About Document Pickup Station", url: "https://www.potsdam.de/node/114026" }
           ]
@@ -130,7 +118,11 @@ export const CONTENT: Translations = {
       hero: {
         title: "Bürgerservicecenter",
         subtitle: "Ihr zentraler Anlaufpunkt für Pässe, Ausweise und Bürgerdienste in Potsdam.",
-        image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/images/passport-1051697_960_720.jpg?h=b3660f0d&itok=DEork815"
+        image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/images/passport-1051697_960_720.jpg?h=b3660f0d&itok=DEork815",
+        cta: {
+             label: "Termin vereinbaren",
+             url: "internal:reservation"
+        }
       },
       alert: {
         type: "info",
@@ -142,10 +134,6 @@ export const CONTENT: Translations = {
           title: "Fast Lane für Pässe und Ausweise",
           description: "Ausschließlich für Reisepass- und Personalausweisanträge (keine vorläufigen Dokumente, keine Namensänderungen). Bitte prüfen Sie die Voraussetzungen vor der Buchung.",
           image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/image/B%C3%BCrgerservice%20Yorckstrasse-Christine-Homann.jpg?h=b8b6b338&itok=Lq-bGkp8",
-          cta: {
-            label: "Fast Lane Termin buchen",
-            url: "internal:fast-lane"
-          },
           links: [
             { label: "Informationen zu Standorten", url: "https://vv.potsdam.de/vv/produkte/fast-lane-standorte.php#tab-unterlagen" }
           ],
@@ -156,10 +144,6 @@ export const CONTENT: Translations = {
           title: "Bürgerservicecenter Yorckstraße",
           description: "Buchen Sie Termine für alle Dienstleistungen, die einen persönlichen Besuch erfordern. Für einfache Passanträge empfehlen wir die Fast Lane.",
           image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/image/20250103_130234.jpg?h=674a5d6c&itok=9SK73Sbv",
-          cta: {
-            label: "Termine Yorckstraße",
-            url: "internal:yorckstrasse"
-          },
           links: [
             { label: "Standorte und Öffnungszeiten (PDF)", url: "https://vv.potsdam.de/vv/Standorte-des-Buergerservicecenters_.pdf" }
           ]
@@ -169,10 +153,6 @@ export const CONTENT: Translations = {
           title: "Bürgerservicecenter Wilhelmgalerie (ohne Termin)",
           description: "Erledigen Sie Bürgerdienste ohne Termin mit einem Smart Waiting Ticket. Begrenztes Ticketkontingent täglich.",
           image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/image/2024-02-27-B%C3%BCrgerservice-Pass%C3%BCbergabe-RobertSchnabel.jpg?h=790be497&itok=GxD8ORfL",
-          cta: {
-            label: "Weitere Informationen",
-            url: "https://vv.potsdam.de/vv/oe/173010100000007821.php"
-          },
           links: [
             { label: "Aktuelle Wartenummer", url: "https://www.smartwarten.de/tablet-special/landeshauptstadt-potsdam-wilhelmsgalerie" },
             { label: "Standorte und Öffnungszeiten (PDF)", url: "https://vv.potsdam.de/vv/Standorte-des-Buergerservicecenters_.pdf" }
@@ -183,10 +163,6 @@ export const CONTENT: Translations = {
           title: "Abholung von Dokumenten",
           description: "Buchen Sie einen Termin zur Abholung oder nutzen Sie die 24/7 Abholstation.",
           image: "https://www.potsdam.de/system/files/styles/potsdam_main_content_teaser_m_2x/private/image/2025-01-27-Dokumentenabholstation-Christine-Homann-IMG_6839.jpg?h=d318f057&itok=b-qIWduz",
-          cta: {
-            label: "Termin zur Abholung buchen",
-            url: "internal:collection"
-          },
           links: [
             { label: "Über die Abholstation", url: "https://www.potsdam.de/node/114026" }
           ]
